@@ -75,3 +75,39 @@ kubectl run curl --image=dareyregistry/curl -i --tty
 
 An abstract way to expose an application running on a set of Pods as a network service.
 
+The Service manifest file is similar to that of the Pod. Let's take a look. Create a yaml file for Service - ***nginx-service.yaml***
+
+```bash
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+    name: nginx-service
+    app: server-service
+spec:
+  selector:
+    app: nginx-pod
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+```
+
+> Notice the ***selector field***, this must be same as the labels in the pod manifest file. This help the service object to map to particular object since they may be many pod running at any particular instance.
+
+```bash
+# Create service for nginx
+k apply -f nginx-service.yaml
+
+# forward the port of the service to free port on your machine localhost
+k port-forward svc/nginx-service 8089:80
+```
+
+![pods](./images/4.png)
+
+Verify in the browser
+
+![pods](./images/5.png)
+
+CREATE A REPLICA SET
