@@ -1,6 +1,6 @@
 # Exploring Common Objects in K8s
 
-Pods
+## Pods
 
 A pod is the smallest unit of kubernete cluster. It has a one to one relationship with a container. This means a pod should only hold one container. However, in some case, a pod can hold more than one related containers. To deploy an object in k8s, YAML file manifest is required with specific sections.
 
@@ -55,4 +55,23 @@ k get pod nginx-pod -o yaml
 
 > The nginx image used in the yaml file is was pull from the docker hub, in some cases the intended repo is explicitly stated.
 
+Although, the nginx pod is created it can not be viewed in the browser.Aanother Kubernetes object called ***Service*** is required to expose to the Pod.
+
 ![pods](./images/2.png)
+
+Although, not reliable because of the ephemeral nature of pods, but for internal use only the container can be viewed by using a *curl* container ***dareyregistry/curl***
+
+```bash
+# Run kubectl to connect inside the container
+kubectl run curl --image=dareyregistry/curl -i --tty
+
+# Type curl and your container's ip
+ curl -v 10.244.0.40:80
+```
+
+![pods](./images/3.png)
+
+## Service
+
+An abstract way to expose an application running on a set of Pods as a network service.
+
