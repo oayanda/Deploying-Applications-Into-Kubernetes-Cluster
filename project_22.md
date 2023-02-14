@@ -55,7 +55,7 @@ k get pod nginx-pod -o yaml
 
 > The nginx image used in the yaml file is was pull from the docker hub, in some cases the intended repo is explicitly stated.
 
-Although, the nginx pod is created it can not be viewed in the browser.Aanother Kubernetes object called ***Service*** is required to expose to the Pod.
+Although, the nginx pod is created it can not be viewed in the browser.Another Kubernetes object called ***Service*** is required to expose to the Pod.
 
 ![pods](./images/2.png)
 
