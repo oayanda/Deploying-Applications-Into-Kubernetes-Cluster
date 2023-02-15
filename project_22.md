@@ -8,7 +8,7 @@ Let's explore how to deploy a simple nginx pod.
 
 **Deploying a Nginx Pod**
 
-*Create a yaml file - nginx-pod.yaml*
+*Create pod manifest yaml file - nginx-pod.yaml*
 
 ```bash
 # Kubernetes api version
@@ -99,7 +99,7 @@ spec:
       targetPort: 80
 ```
 
-> Note the ***selector field***, this must be same as the labels (in this case, ***app: nginx-pod***) in the pod manifest file. This help the service object to map to particular object since they may be many pod running at any particular instance. The ***targetPort*** is set to the same value as the ***port*** field.
+> Note the ***selector field***, this must be same as the labels (in this case, ***app: nginx-pod***) in the pod manifest file. This help the service object to map to particular object since they may be many pod running at any particular instance. The ***targetPort*** is set to the same value as the ***port*** field. Additionally, the Service object can also use a ***nodePort*** field to expose the Pod externally, we will see this later.
 
 ```bash
 # Create service for nginx
@@ -107,6 +107,7 @@ k apply -f nginx-service.yaml
 
 # forward the port of the service to free port on your machine localhost
 k port-forward svc/nginx-service 8089:80
+
 ```
 
 ![pods](./images/4.png)
@@ -115,7 +116,73 @@ Verify in the browser
 
 ![pods](./images/5.png)
 
+```bash
+# Clean up serive
+k delete svc nginx-service
+
+# clean up pod
+k delete po nginx-pod
 ## ReplicaSet
+```
 
-A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. As such, it is often used to guarantee the availability of a specified number of identical Pods
 
+A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. As such, it is often used to guarantee the availability of a specified number of identical Pods.
+
+The child field ***matchLabels*** of the ***selector*** field is used to identify the pod and a ***replica*** field is used to indicate how many pods should be maintained. It uses the template field to specify the data for the new Pod(s) it should create when scaling up or to meet the number of replicas criteria.
+
+Let see this action
+
+Create a replicaset manifest yaml file - rs.yaml
+
+```bash
+#Part 1
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-rs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-pod
+
+#Part 2
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+         app: nginx-pod
+    spec:
+      containers:
+      - image: nginx:latest
+        name: nginx-pod
+        ports:
+        - containerPort: 80
+          protocol: TCP
+```
+
+```bash
+# Create replicaset for ngix pod. 
+k create -f rs.yaml
+
+# View replicaset
+k get rs
+
+# View pods created by replicaset
+k get pods
+
+# Delete one of the pods
+k delete po nginx-rs-2czdx
+
+```
+
+![pods](./images/6.png)
+
+Notice replica is set to 3, hence the 3 pods. Even a pod is deleted, It would recreate another pod from the configuration stated in the ***template*** field hence, it will always maintain 3 avilable pods unless specified otherwise.
+
+```bash
+# Clean up
+k delete rs nginx-rs
+```
+
+USING AWS LOAD BALANCER TO ACCESS YOUR SERVICE IN KUBERNETES
