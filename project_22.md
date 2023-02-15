@@ -234,5 +234,3 @@ k get deploy,rs,pod
 k delete deploy nginx-deployment
 ```
 
-## Persisting Data for Pods
-
