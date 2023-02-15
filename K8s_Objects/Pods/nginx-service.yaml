@@ -8,7 +8,7 @@ metadata:
 spec:
 
   selector:
-    app: nginx-pod
+    tier: frontend
   ports:
     - port: 80
       protocol: TCP

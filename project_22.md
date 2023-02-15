@@ -129,7 +129,7 @@ A ReplicaSet's purpose is to maintain a stable set of replica Pods running at an
 
 The child field ***matchLabels*** of the ***selector*** field is used to identify the pod and a ***replica*** field is used to indicate how many pods should be maintained. It uses the template field to specify the data for the new Pod(s) it should create when scaling up or to meet the number of replicas criteria.
 
-Let see this action
+Let see this in action
 
 Create a replicaset manifest yaml file - rs.yaml
 
@@ -177,7 +177,7 @@ k delete po nginx-rs-2czdx
 
 ![pods](./images/6.png)
 
-Notice replica is set to 3, hence the 3 pods. Even a pod is deleted, It would recreate another pod from the configuration stated in the ***template*** field hence, it will always maintain 3 avilable pods unless specified otherwise.
+Notice replica is set to 3, hence the 3 pods. If a pod is terminates, it recreates another pod from the configuration stated in the ***template*** field hence, it will always maintain 3 avilable pods unless specified otherwise.
 
 ```bash
 # Clean up
@@ -235,3 +235,4 @@ k delete deploy nginx-deployment
 ```
 
 ## Persisting Data for Pods
+
