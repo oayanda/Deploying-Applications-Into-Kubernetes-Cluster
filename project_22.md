@@ -57,7 +57,6 @@ k get pod nginx-pod -o yaml
 
 > The nginx image used in the yaml file is was pull from the docker hub, in some cases the intended repo is explicitly stated.
 
-
 Although, the nginx pod is created it can not be viewed in the browser.Another Kubernetes object called ***Service*** is required to expose to the Pod.
 
 
@@ -185,4 +184,54 @@ Notice replica is set to 3, hence the 3 pods. Even a pod is deleted, It would re
 k delete rs nginx-rs
 ```
 
-USING AWS LOAD BALANCER TO ACCESS YOUR SERVICE IN KUBERNETES
+## Deployments
+
+A Deployment is another layer above ReplicaSets and Pods, newer and more advanced level concept than ReplicaSets. It manages the deployment of ReplicaSets and allows for easy updating of a ReplicaSet as well as the ability to roll back to a previous version of deployment. It is declarative and can be used for rolling updates of micro-services, ensuring there is no downtime.
+
+Officially, it is highly recommended to use Deplyments to manage replica sets rather than using replica sets directly.
+
+The manifest file for a deployment looks similar to a replicaset but the kind is ***deployment***.
+
+Create a deployment manifest yaml file - deployment.yaml
+
+```bash
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    tier: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        tier: frontend
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+```
+
+```bash
+# Create deployment
+k create -f deployment.yaml
+
+# view deployment, replicaset and pods
+k get deploy,rs,pod
+
+```
+
+![deployments](./images/7.png)
+
+```bash
+# Clean up
+k delete deploy nginx-deployment
+```
+
+## Persisting Data for Pods
