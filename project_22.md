@@ -19,16 +19,18 @@ kind: Pod
 
 # Provides information about the resource like name, label
 metadata:
-name: nginx-pod
-
+ name: nginx-pod
+ labels:
+  apps: nginx-pod
+    
 # Consists of the core information about Pod
 spec:
-containers:
-- image: nginx:latest
-name: nginx-pod
-ports:
-- containerPort: 80
-  protocol: TCP
+ containers:
+  - image: nginx:latest
+    name: nginx-pod
+    ports:
+     - containerPort: 80
+       protocol: TCP
 ```
 
 ```bash
@@ -55,11 +57,14 @@ k get pod nginx-pod -o yaml
 
 > The nginx image used in the yaml file is was pull from the docker hub, in some cases the intended repo is explicitly stated.
 
+
 Although, the nginx pod is created it can not be viewed in the browser.Another Kubernetes object called ***Service*** is required to expose to the Pod.
+
 
 ![pods](./images/2.png)
 
 Although, not reliable because of the ephemeral nature of pods, but for internal use only the container can be viewed by using a *curl* container ***dareyregistry/curl***
+
 
 ```bash
 # Run kubectl to connect inside the container
@@ -75,7 +80,7 @@ kubectl run curl --image=dareyregistry/curl -i --tty
 
 An abstract way to expose an application running on a set of Pods as a network service.
 
-The Service manifest file is similar to that of the Pod. Let's take a look. Create a yaml file for Service - ***nginx-service.yaml***
+The Service manifest file fields are similar to that of the Pod. Let's take a look. Create a yaml file for Service - ***nginx-service.yaml***
 
 ```bash
 apiVersion: v1
@@ -94,7 +99,7 @@ spec:
       targetPort: 80
 ```
 
-> Notice the ***selector field***, this must be same as the labels in the pod manifest file. This help the service object to map to particular object since they may be many pod running at any particular instance.
+> Note the ***selector field***, this must be same as the labels (in this case, ***app: nginx-pod***) in the pod manifest file. This help the service object to map to particular object since they may be many pod running at any particular instance. The ***targetPort*** is set to the same value as the ***port*** field.
 
 ```bash
 # Create service for nginx
@@ -110,4 +115,7 @@ Verify in the browser
 
 ![pods](./images/5.png)
 
-CREATE A REPLICA SET
+## ReplicaSet
+
+A ReplicaSet's purpose is to maintain a stable set of replica Pods running at any given time. As such, it is often used to guarantee the availability of a specified number of identical Pods
+
